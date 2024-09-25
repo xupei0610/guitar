@@ -1,0 +1,356 @@
+<!-- Hand Model is modified from MPL (MuJoCo HAPTIX: A Virtual Reality System for Hand Manipulation) -->
+
+<!-- MPL License
+This file and the .stl mesh files referenced from it have been derived by Roboti LLC from the model
+of the Modular Prosthetic Limb developed by The Johns Hopkins University / Applied Physics
+Laboratory. The modifications are as follows: the original meshes have been replaced with their
+convex hulls; the original URDF model has been converted to the MJCF format and a number of
+MJCF-specific fields have been added.
+
+The Johns Hopkins University / Applied Physics Laboratory has given Roboti LLC permission to
+distribute the modified model under the following license:
+
+=========================
+
+(C) 2013 The Johns Hopkins University / Applied Physics Laboratory All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied. See the License for the specific language governing permissions and limitations under the
+License.
+
+========================
+
+The modifications made by Roboti LLC are also licensed under the Apache License version 2.0.
+-->
+
+<mujoco model="guitar_right">
+    <compiler angle="radian" />
+    <default>
+        <default class="hand">
+            <geom condim="1" friction="1.0 0.05 0.05" solimp=".9 .99 .003" solref=".015 1" />
+            <joint type="hinge" pos="0 0 0" limited="true" solimplimit="0 .99 .01" />
+        </default>
+    </default>
+
+    <asset>
+        <mesh name="RH:wrist" file="mesh/wristy.stl" />
+        <mesh name="RH:wrist2" file="mesh/wristx.stl" />
+        <mesh name="RH:palm" file="mesh/palm.stl" />
+        <mesh name="RH:thumb1" file="mesh/thumb1.stl" scale="1 0.95 0.95" />
+        <mesh name="RH:thumb2" file="mesh/thumb2.stl" scale="1 0.95 0.95" />
+        <mesh name="RH:thumb3" file="mesh/thumb3.stl" scale="1 0.95 0.95" />
+        <mesh name="RH:index1" file="mesh/index1.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:index2" file="mesh/index2.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:index3" file="mesh/index3.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:middle1" file="mesh/middle1.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:middle2" file="mesh/middle2.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:middle3" file="mesh/middle3.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:ring1" file="mesh/ring1.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:ring2" file="mesh/ring2.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:ring3" file="mesh/ring3.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:pinky1" file="mesh/pinky1.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:pinky2" file="mesh/pinky2.stl" scale="0.95 1 0.95" />
+        <mesh name="RH:pinky3" file="mesh/pinky3.stl" scale="0.95 1 0.95" />
+    </asset>
+
+    <contact>
+        <exclude body1="RH:wrist" body2="RH:thumb1" />
+        <exclude body1="RH:palm" body2="RH:thumb1" />
+        <exclude body1="RH:palm" body2="RH:thumb2" />
+        <exclude body1="RH:palm" body2="RH:index1" />
+        <exclude body1="RH:palm" body2="RH:middle1" />
+        <exclude body1="RH:palm" body2="RH:ring1" />
+        <exclude body1="RH:palm" body2="RH:pinky1" />
+        <exclude body1="G:body" body2="G:pluck_range" />
+    </contact>
+
+    <worldbody>
+        <body childclass="hand" name="guitar" pos="0 0 0.89"
+            quat="0.5572999715805054 -0.18685252964496613 0.5796867609024048 0.5643278956413269">
+
+            <body name="G:body" pos="0 -0.4 -0.0217">
+                <geom type="box" pos="0 0 0" size="0.15 0.17 0.02" />
+            </body>
+            <body name="G:pluck_range" pos="0 -0.328 0.0063">
+                <geom type="box" pos="0 0 0" size="0.028 0.086 0.0075" />
+            </body>
+
+            <body name="RH:wrist_dx" pos="0 0 0">
+                <joint name="RH:wrist_dx" type="slide" axis="1 0 0" range="-1 1" stiffness="10"
+                    damping="0.4" armature=".01" />
+                <body name="RH:wrist_dy" pos="0 0 0">
+                    <joint name="RH:wrist_dy" type="slide" axis="0 1 0" range="-1 1" stiffness="10"
+                        damping="0.4" armature=".01" />
+                    <body name="RH:wrist_dz" pos="0 0 0">
+                        <joint name="RH:wrist_dz" type="slide" axis="0 0 1" range="-1 1"
+                            stiffness="10" damping="0.4" armature=".01" />
+
+                        <body name="RH:wrist" pos="0 0 0">
+                            <joint name="RH:wrist_x" axis="1 0 0" range="-3.14 3.14" stiffness="10"
+                                damping="0.4" armature=".01" />
+                            <joint name="RH:wrist_y" axis="0 1 0" range="-3.14 3.14" stiffness="10"
+                                damping="0.4" armature=".01" />
+                            <joint name="RH:wrist_z" axis="0 0 1" range="-3.14 3.14" stiffness="10"
+                                damping="0.4" armature=".01" />
+
+                            <inertial pos="-7.08369e-005 -0.0217787 -0.000286168"
+                                quat="0.707488 0.00581744 -0.0107421 0.70662" mass="0.0272932"
+                                diaginertia="2.46813e-005 1.77029e-005 1.71079e-005" />
+                            <geom type="mesh" mesh="RH:wrist" pos="0 0.035 0.006934" />
+
+                            <!-- ======= PALM  ======= -->
+                            <body name="RH:palm" pos="0.025 0 0.006934">
+                                <inertial pos="-0.0217876 -0.0376147 0.00276997"
+                                    quat="-0.146373 0.723094 0.0985561 0.66783" mass="0.119867"
+                                    diaginertia="0.000123088 0.000100082 6.89467e-005" />
+                                <geom type="mesh" mesh="RH:palm" />
+
+                                <!-- ======= THUMB ======= -->
+                                <body name="RH:thumb1"
+                                    pos="-0.0005608452818393513 -0.016681 -0.008512">
+                                    <inertial pos="0.019024 0.000361131 -0.000186763"
+                                        quat="0.5208 0.469572 0.484571 0.522934" mass="0.00596213"
+                                        diaginertia="9.88001e-007 9.45125e-007 5.32989e-007" />
+                                    <joint name="RH:thumb1_x" axis="1 0 0" range="0 0.698132"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="RH:thumb1_y" axis="0 1 0" range="0 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="RH:thumb1_z" axis="0 0 1" range="-1.5708 0"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <geom type="mesh" mesh="RH:thumb1" />
+                                    <body name="RH:thumb2" pos="0.04305736693739891 0 0">
+                                        <inertial pos="0.0188965 0.000375725 0.00065381"
+                                            quat="0.502274 0.484638 0.475673 0.535333"
+                                            mass="0.00599792"
+                                            diaginertia="9.96692e-007 9.64948e-007 5.14416e-007" />
+                                        <joint name="RH:thumb2" axis="0 0 1" range="-1.5708 0"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="RH:thumb2" pos="0.001 0 0" />
+                                        <body name="RH:thumb3" pos="0.03759716659784317 0 0">
+                                            <inertial pos="0.0188965 0.000375725 0.00065381"
+                                                quat="0.502274 0.484638 0.475673 0.535333"
+                                                mass="0.00599792"
+                                                diaginertia="9.96692e-007 9.64948e-007 5.14416e-007" />
+                                            <joint name="RH:thumb3" axis="0 0 1"
+                                                range="-1.5708 0.0872665" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="RH:thumb3" pos="0.00825 0 0" />
+                                            <body name="RH:thumb_top" pos="0.03611031174659729 0 0">
+                                                <!-- <geom type="sphere" size="0.005" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+                                <!-- ======= INDEX ======= -->
+                                <body name="RH:index1" pos="0.00843 -0.07124962612199782 0.003268">
+                                    <inertial pos="0.000406487 -0.0213125 0.000655609"
+                                        quat="0.698452 0.715642 -0.00415384 0.0023049"
+                                        mass="0.00478235"
+                                        diaginertia="8.18599e-007 7.95693e-007 3.06254e-007" />
+                                    <joint name="RH:index1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="RH:index1_z" axis="0 0 1"
+                                        range="-0.523599 0.523599" stiffness="10" damping="0.2"
+                                        armature=".01" />
+                                    <geom type="mesh" mesh="RH:index1" pos="0 0.000325 0" />
+                                    <body name="RH:index2" pos="0 -0.043390409219264984 0">
+                                        <inertial pos="-0.000841462 -0.012689 0.000572665"
+                                            quat="0.734882 0.677481 -0.028511 0.0124827"
+                                            mass="0.00344764"
+                                            diaginertia="3.63962e-007 3.59059e-007 1.05304e-007" />
+                                        <joint name="RH:index2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="RH:index2" pos="0.001032 0.001181 0" />
+                                        <body name="RH:pick" pos="0.007 -0.048 -0.005">
+                                            <!-- <geom type="capsule" fromto="0 0 0 0 0.03 0"
+                                            size="0.001" /> -->
+                                        </body>
+                                        <body name="RH:index3" pos="0 -0.025913607001304626 0">
+                                            <inertial pos="4.32004e-005 -0.0125318 0.000903476"
+                                                quat="0.516251 0.4829 -0.483241 0.516498"
+                                                mass="0.00274415"
+                                                diaginertia="1.19635e-007 1.09202e-007 7.77873e-008" />
+                                            <joint name="RH:index3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="RH:index3" pos="0 -0.003237 0" />
+                                            <body name="RH:index_top"
+                                                pos="0 -0.019169357657432556 0">
+                                                <!-- <body name="RH:index_top" pos="0
+                                                -0.025169357657432556 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+
+                                <!-- ======= MIDDLE ======= -->
+                                <body name="RH:middle1" pos="-0.012834 -0.07500058141088484 0.00708">
+                                    <inertial pos="0.000406411 -0.0213125 0.00065565"
+                                        quat="0.698451 0.715642 -0.00415503 0.00230486"
+                                        mass="0.00478229"
+                                        diaginertia="8.18595e-007 7.9569e-007 3.06253e-007" />
+                                    <joint name="RH:middle1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="RH:middle1_z" axis="0 0 1"
+                                        range="-0.349066 0.349066" stiffness="10" damping="0.2"
+                                        armature=".01" />
+                                    <geom type="mesh" mesh="RH:middle1" pos="0 -0.003 0" />
+                                    <body name="RH:middle2" pos="0 -0.04577417474985123 0">
+                                        <inertial pos="-0.000841444 -0.012689 0.00057266"
+                                            quat="0.734883 0.677482 -0.0284727 0.0124412"
+                                            mass="0.00344765"
+                                            diaginertia="3.63962e-007 3.5906e-007 1.05304e-007" />
+                                        <joint name="RH:middle2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="RH:middle2" pos="0.001032 -0.0064 0" />
+                                        <body name="RH:middle3" pos="0 -0.02999854564666748 0">
+                                            <inertial pos="4.31236e-005 -0.0125318 0.000903446"
+                                                quat="0.516263 0.482913 -0.483228 0.516487"
+                                                mass="0.00274417"
+                                                diaginertia="1.19635e-007 1.09202e-007 7.77884e-008" />
+                                            <joint name="RH:middle3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="RH:middle3" pos="0 -0.0078 0" />
+                                            <body name="RH:middle_top"
+                                                pos="0 -0.023867698192596436 0">
+                                                <!-- <body name="RH:middle_top" pos="0
+                                                -0.029867698192596436 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+                                <!-- ======= RING ======= -->
+                                <body name="RH:ring1" pos="-0.034098 -0.06915576300907134 0.003114">
+                                    <inertial pos="0.000406447 -0.0213125 0.00065563"
+                                        quat="0.698451 0.715642 -0.00415675 0.00230715"
+                                        mass="0.00478232"
+                                        diaginertia="8.18597e-007 7.95692e-007 3.06254e-007" />
+                                    <joint name="RH:ring1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="RH:ring1_z" axis="0 0 1" range="-0.349066 0.349066"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <geom type="mesh" mesh="RH:ring1" pos="0 0.003 0" />
+                                    <body name="RH:ring2" pos="0 -0.043062036752700806 0">
+                                        <inertial pos="-0.000841518 -0.012689 0.000572674"
+                                            quat="0.73488 0.677478 -0.0285773 0.0125557"
+                                            mass="0.00344767"
+                                            diaginertia="3.63963e-007 3.59061e-007 1.05305e-007" />
+                                        <joint name="RH:ring2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="RH:ring2" pos="0.000527 -0.003 0" />
+                                        <body name="RH:ring3" pos="0 -0.027877284049987793 0">
+                                            <inertial pos="4.31973e-005 -0.0125318 0.000903457"
+                                                quat="0.516255 0.482902 -0.483238 0.516495"
+                                                mass="0.00274416"
+                                                diaginertia="1.19635e-007 1.09202e-007 7.77877e-008" />
+                                            <joint name="RH:ring3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="RH:ring3" pos="0 -0.005577 0" />
+                                            <body name="RH:ring_top" pos="0 -0.02153291618824005 0">
+                                                <!-- <body name="RH:ring_top" pos="0
+                                                -0.02753291618824005 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+                                <!-- ======= LITTLE ======= -->
+                                <body name="RH:pinky1"
+                                    pos="-0.053317 -0.06068319311141967 -0.005084">
+                                    <inertial pos="0.000458624 -0.0160478 0.000924735"
+                                        quat="0.685529 0.72723 0.021252 -0.0270914" mass="0.0034099"
+                                        diaginertia="4.03391e-007 3.84061e-007 2.19866e-007" />
+                                    <joint name="RH:pinky1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="RH:pinky1_z" axis="0 0 1"
+                                        range="-0.698132 0.349066" stiffness="10" damping="0.2"
+                                        armature=".01" />
+                                    <geom type="mesh" mesh="RH:pinky1" pos="0 0.0017 0" />
+                                    <body name="RH:pinky2" pos="0 -0.03316479182243347 0">
+                                        <inertial pos="-0.000270832 -0.00914628 0.000738493"
+                                            quat="0.746786 0.664476 -4.11065e-005 -0.0279675"
+                                            mass="0.00250622"
+                                            diaginertia="1.79089e-007 1.75934e-007 7.44543e-008" />
+                                        <joint name="RH:pinky2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="RH:pinky2" />
+                                        <body name="RH:pinky3" pos="0 -0.022145133137702942 0">
+                                            <inertial pos="3.85026e-005 -0.0125047 0.000912295"
+                                                quat="0.516037 0.484447 -0.483043 0.515448"
+                                                mass="0.00273265"
+                                                diaginertia="1.19141e-007 1.08629e-007 7.77271e-008" />
+                                            <joint name="RH:pinky3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="RH:pinky3" pos="0 -0.0005 0" />
+                                            <body name="RH:pinky_top" pos="0 -0.01653188192844391 0">
+                                                <!-- <body name="RH:pinky_top" pos="0
+                                                -0.02253188192844391 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+
+                    </body>
+                </body>
+            </body>
+
+
+        </body>
+    </worldbody>
+
+    <actuator>
+        <motor name="RH:wrist_dx" gear="20" joint="RH:wrist_dx" />
+        <motor name="RH:wrist_dy" gear="20" joint="RH:wrist_dy" />
+        <motor name="RH:wrist_dz" gear="20" joint="RH:wrist_dz" />
+
+        <motor name="RH:wrist_x" gear="20" joint="RH:wrist_x" />
+        <motor name="RH:wrist_y" gear="20" joint="RH:wrist_y" />
+        <motor name="RH:wrist_z" gear="20" joint="RH:wrist_z" />
+
+        <motor name="RH:thumb1_x" gear="20" joint="RH:thumb1_x" />
+        <motor name="RH:thumb1_y" gear="20" joint="RH:thumb1_y" />
+        <motor name="RH:thumb1_z" gear="20" joint="RH:thumb1_z" />
+        <motor name="RH:thumb2" gear="20" joint="RH:thumb2" />
+        <motor name="RH:thumb3" gear="20" joint="RH:thumb3" />
+
+        <motor name="RH:index1_z" gear="20" joint="RH:index1_z" />
+        <motor name="RH:index1_x" gear="20" joint="RH:index1_x" />
+
+        <motor name="RH:middle1_z" gear="20" joint="RH:middle1_z" />
+        <motor name="RH:middle1_x" gear="20" joint="RH:middle1_x" />
+
+        <motor name="RH:ring1_z" gear="20" joint="RH:ring1_z" />
+        <motor name="RH:ring1_x" gear="20" joint="RH:ring1_x" />
+
+        <motor name="RH:pinky1_z" gear="20" joint="RH:pinky1_z" />
+        <motor name="RH:pinky1_x" gear="20" joint="RH:pinky1_x" />
+
+
+        <motor name="RH:index2" gear="20" joint="RH:index2" />
+        <motor name="RH:index3" gear="20" joint="RH:index3" />
+        <motor name="RH:middle2" gear="20" joint="RH:middle2" />
+        <motor name="RH:middle3" gear="20" joint="RH:middle3" />
+        <motor name="RH:ring2" gear="20" joint="RH:ring2" />
+        <motor name="RH:ring3" gear="20" joint="RH:ring3" />
+        <motor name="RH:pinky2" gear="20" joint="RH:pinky2" />
+        <motor name="RH:pinky3" gear="20" joint="RH:pinky3" />
+    </actuator>
+</mujoco>

@@ -1,0 +1,5 @@
+motions:
+- file: motions/scale.json
+  weight: null 
+- file: motions/strum.json
+  weight: null

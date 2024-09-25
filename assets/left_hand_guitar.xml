@@ -1,0 +1,448 @@
+<!-- Hand Model is modified from MPL (MuJoCo HAPTIX: A Virtual Reality System for Hand Manipulation) -->
+
+<!-- MPL License
+This file and the .stl mesh files referenced from it have been derived by Roboti LLC from the model
+of the Modular Prosthetic Limb developed by The Johns Hopkins University / Applied Physics
+Laboratory. The modifications are as follows: the original meshes have been replaced with their
+convex hulls; the original URDF model has been converted to the MJCF format and a number of
+MJCF-specific fields have been added.
+
+The Johns Hopkins University / Applied Physics Laboratory has given Roboti LLC permission to
+distribute the modified model under the following license:
+
+=========================
+
+(C) 2013 The Johns Hopkins University / Applied Physics Laboratory All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied. See the License for the specific language governing permissions and limitations under the
+License.
+
+========================
+
+The modifications made by Roboti LLC are also licensed under the Apache License version 2.0.
+-->
+
+<mujoco model="guitar_left">
+    <compiler angle="radian" />
+    <default>
+        <default class="hand">
+            <geom condim="1" friction="1.0 0.05 0.05" solimp=".9 .99 .003" solref=".015 1" />
+            <joint type="hinge" pos="0 0 0" limited="true" solimplimit="0 .99 .01" />
+        </default>
+    </default>
+
+    <asset>
+        <mesh name="guitar_neck1" file="mesh/guitar_neck1.obj" />
+        <mesh name="guitar_neck2" file="mesh/guitar_neck2.obj" />
+        <mesh name="LH:wrist" file="mesh/wristy_left.stl" />
+        <mesh name="LH:palm" file="mesh/palm_left.stl" />
+        <mesh name="LH:thumb1" file="mesh/thumb1_left.stl" scale="1 0.95 0.95" />
+        <mesh name="LH:thumb2" file="mesh/thumb2_left.stl" scale="1 0.95 0.95" />
+        <mesh name="LH:thumb3" file="mesh/thumb3_left.stl" scale="1 0.95 0.95" />
+        <mesh name="LH:index1" file="mesh/index1_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:index2" file="mesh/index2_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:index3" file="mesh/index3_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:middle1" file="mesh/middle1_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:middle2" file="mesh/middle2_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:middle3" file="mesh/middle3_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:ring1" file="mesh/ring1_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:ring2" file="mesh/ring2_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:ring3" file="mesh/ring3_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:pinky1" file="mesh/pinky1_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:pinky2" file="mesh/pinky2_left.stl" scale="0.95 1 0.95" />
+        <mesh name="LH:pinky3" file="mesh/pinky3_left.stl" scale="0.95 1 0.95" />
+    </asset>
+
+    <contact>
+        <exclude body1="LH:wrist" body2="LH:thumb1" />
+        <exclude body1="LH:wrist" body2="LH:thumb2" />
+        <exclude body1="LH:palm" body2="LH:thumb1" />
+        <exclude body1="LH:palm" body2="LH:thumb2" />
+        <exclude body1="LH:palm" body2="LH:index1" />
+        <exclude body1="LH:palm" body2="LH:middle1" />
+        <exclude body1="LH:palm" body2="LH:ring1" />
+        <exclude body1="LH:palm" body2="LH:pinky1" />
+    </contact>
+
+
+    <worldbody>
+        <!-- 22 frets wit scale length 0.621365 -->
+        <body childclass="hand" name="guitar" pos="0 0 0.89"
+            quat="0.5572999715805054 -0.18685252964496613 0.5796867609024048 0.5643278956413269">
+            <geom type="mesh" mesh="guitar_neck1" />
+            <geom type="mesh" mesh="guitar_neck2" />
+            <body name="G:nut" pos="0 0.2165 0.0113">
+                <geom type="box" pos="0 0 0" size="0.0205 0.000955 0.002" />
+            </body>
+            <body name="G:fret1" pos="0 0.18162 0.01028">
+                <geom type="box" pos="0 0 0" size="0.02 0.0007 0.00095" />
+            </body>
+            <body name="G:fret2" pos="0 0.14871 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0205 0.0007 0.00095" />
+            </body>
+            <body name="G:fret3" pos="0 0.11764 0.01028">
+                <geom type="box" pos="0 0 0" size="0.021 0.0007 0.00095" />
+            </body>
+            <body name="G:fret4" pos="0 0.088313 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0214 0.0007 0.00095" />
+            </body>
+            <body name="G:fret5" pos="0 0.060633 0.01028">
+                <geom type="box" pos="0 0 0" size="0.022 0.0007 0.00095" />
+            </body>
+            <body name="G:fret6" pos="0 0.034506 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0225 0.0007 0.00095" />
+            </body>
+            <body name="G:fret7" pos="0 0.009846 0.01028">
+                <geom type="box" pos="0 0 0" size="0.023 0.0007 0.00095" />
+            </body>
+            <body name="G:fret8" pos="0 -0.01343 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0233 0.0007 0.00095" />
+            </body>
+            <body name="G:fret9" pos="0 -0.035399 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0235 0.0007 0.00095" />
+            </body>
+            <body name="G:fret10" pos="0 -0.056136 0.01028">
+                <geom type="box" pos="0 0 0" size="0.024 0.0007 0.00095" />
+            </body>
+            <body name="G:fret11" pos="0 -0.075708 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0244 0.0007 0.00095" />
+            </body>
+            <body name="G:fret12" pos="0 -0.094182 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0246 0.0007 0.00095" />
+            </body>
+            <body name="G:fret13" pos="0 -0.11162 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0249 0.0007 0.00095" />
+            </body>
+            <body name="G:fret14" pos="0 -0.12808 0.01028">
+                <geom type="box" pos="0 0 0" size="0.025 0.0007 0.00095" />
+            </body>
+            <body name="G:fret15" pos="0 -0.14361 0.01028">
+                <geom type="box" pos="0 0 0" size="0.02525 0.0007 0.00095" />
+            </body>
+            <body name="G:fret16" pos="0 -0.15828 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0255 0.0007 0.00095" />
+            </body>
+            <body name="G:fret17" pos="0 -0.17212 0.01028">
+                <geom type="box" pos="0 0 0" size="0.02575 0.0007 0.00095" />
+            </body>
+            <body name="G:fret18" pos="0 -0.18518 0.01028">
+                <geom type="box" pos="0 0 0" size="0.026 0.0007 0.00095" />
+            </body>
+            <body name="G:fret19" pos="0 -0.19751 0.01028">
+                <geom type="box" pos="0 0 0" size="0.02615 0.0007 0.00095" />
+            </body>
+            <body name="G:fret20" pos="0 -0.20915 0.01028">
+                <geom type="box" pos="0 0 0" size="0.02635 0.0007 0.00095" />
+            </body>
+            <body name="G:fret21" pos="0 -0.22013 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0265 0.0007 0.00095" />
+            </body>
+            <body name="G:fret22" pos="0 -0.2305 0.01028">
+                <geom type="box" pos="0 0 0" size="0.0266 0.0007 0.00095" />
+            </body>
+            <body name="G:string1" pos="0.01765 0.2165 0.01230">
+            </body>
+            <body name="G:string2" pos="0.01050 0.2165 0.01230">
+            </body>
+            <body name="G:string3" pos="0.00360 0.2165 0.01230">
+            </body>
+            <body name="G:string4" pos="-0.00360 0.2165 0.01230">
+            </body>
+            <body name="G:string5" pos="-0.01050 0.2165 0.01230">
+            </body>
+            <body name="G:string6" pos="-0.01765 0.2165 0.01230">
+            </body>
+            <body name="G:string1_end" pos="0.02544 -0.40345 0.01230">
+            </body>
+            <body name="G:string2_end" pos="0.01527 -0.405 0.01230">
+            </body>
+            <body name="G:string3_end" pos="0.00523 -0.4067 0.01230">
+            </body>
+            <body name="G:string4_end" pos="-0.005223 -0.4035 0.01230">
+            </body>
+            <body name="G:string5_end" pos="-0.01529 -0.40748 0.01230">
+            </body>
+            <body name="G:string6_end" pos="-0.0255 -0.40905 0.01230">
+            </body>
+
+
+            <body name="LH:wrist_dx" pos="0 0 0">
+                <joint name="LH:wrist_dx" type="slide" axis="1 0 0" range="-1 1" stiffness="10"
+                    damping="0.4" armature=".01" />
+                <body name="LH:wrist_dy" pos="0 0 0">
+                    <joint name="LH:wrist_dy" type="slide" axis="0 1 0" range="-1 1" stiffness="10"
+                        damping="0.4" armature=".01" />
+                    <body name="LH:wrist_dz" pos="0 0 0">
+                        <joint name="LH:wrist_dz" type="slide" axis="0 0 1" range="-1 1"
+                            stiffness="10" damping="0.4" armature=".01" />
+
+                        <body name="LH:wrist" pos="0 0 0">
+                            <joint name="LH:wrist_x" axis="1 0 0" range="-3.14 3.14" stiffness="10"
+                                damping="0.4" armature=".01" />
+                            <joint name="LH:wrist_y" axis="0 1 0" range="-3.14 3.14" stiffness="10"
+                                damping="0.4" armature=".01" />
+                            <joint name="LH:wrist_z" axis="0 0 1" range="-3.14 3.14" stiffness="10"
+                                damping="0.4" armature=".01" />
+
+                            <inertial pos="7.08369e-005 -0.0217787 -0.000286168"
+                                quat="0.707488 0.00581744 -0.0107421 0.70662" mass="0.0272932"
+                                diaginertia="2.46813e-005 1.77029e-005 1.71079e-005" />
+                            <geom type="mesh" mesh="LH:wrist" pos="0 0.035 0.006934" />
+
+                            <!-- ======= PALM  ======= -->
+                            <body name="LH:palm" pos="-0.025 0 0.006934">
+                                <inertial pos="0.0217876 -0.0376147 0.00276997"
+                                    quat="0.36373 1.523094 -.3585561 1.66783" mass="0.119867"
+                                    diaginertia="0.000123088 0.000100082 6.89467e-005" />
+                                <geom type="mesh" mesh="LH:palm" />
+
+                                <!-- ======= THUMB ======= -->
+                                <body name="LH:thumb1"
+                                    pos="0.0005608452818393513 -0.016681 -0.008512">
+                                    <inertial pos="-0.019024 0.000361131 -0.000186763"
+                                        quat="0.5208 0.469572 0.484571 0.522934" mass="0.00596213"
+                                        diaginertia="9.88001e-007 9.45125e-007 5.32989e-007" />
+                                    <joint name="LH:thumb1_x" axis="1 0 0" range="0 0.698132"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="LH:thumb1_y" axis="0 1 0" range="-1.5708 0"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="LH:thumb1_z" axis="0 0 1" range="0 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <geom type="mesh" mesh="LH:thumb1" />
+                                    <body name="LH:thumb2" pos="-0.04305736693739891 0 0">
+                                        <inertial pos="-0.0188965 0.000375725 0.00065381"
+                                            quat="0.502274 0.484638 0.475673 0.535333"
+                                            mass="0.00599792"
+                                            diaginertia="9.96692e-007 9.64948e-007 5.14416e-007" />
+                                        <joint name="LH:thumb2" axis="0 0 1" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="LH:thumb2" pos="-0.001 0 0" />
+                                        <body name="LH:thumb3" pos="-0.03759716659784317 0 0">
+                                            <inertial pos="-0.0188965 0.000375725 0.00065381"
+                                                quat="0.502274 0.484638 0.475673 0.535333"
+                                                mass="0.00599792"
+                                                diaginertia="9.96692e-007 9.64948e-007 5.14416e-007" />
+                                            <joint name="LH:thumb3" axis="0 0 1"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="LH:thumb3" pos="-0.00825 0 0" />
+                                            <body name="LH:thumb_top" pos="-0.03611031174659729 0 0">
+                                                <!-- <geom type="sphere" size="0.005" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+                                <!-- ======= INDEX ======= -->
+                                <body name="LH:index1" pos="-0.00843 -0.07124962612199782 0.003268">
+                                    <inertial pos="-0.000406487 -0.0213125 0.000655609"
+                                        quat="0.698452 0.715642 -0.00415384 0.0023049"
+                                        mass="0.00478235"
+                                        diaginertia="8.18599e-007 7.95693e-007 3.06254e-007" />
+                                    <joint name="LH:index1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="LH:index1_z" axis="0 0 1"
+                                        range="-0.523599 0.523599" stiffness="10" damping="0.2"
+                                        armature=".01" />
+                                    <geom type="mesh" mesh="LH:index1" pos="0 0.000325 0" />
+                                    <body name="LH:index2" pos="0 -0.043390409219264984 0">
+                                        <inertial pos="0.000841462 -0.012689 0.000572665"
+                                            quat="0.734882 0.677481 -0.028511 0.0124827"
+                                            mass="0.00344764"
+                                            diaginertia="3.63962e-007 3.59059e-007 1.05304e-007" />
+                                        <joint name="LH:index2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="LH:index2"
+                                            pos="-0.001032 0.001181 0" />
+                                        <body name="LH:index3" pos="0 -0.025913607001304626 0">
+                                            <inertial pos="-4.32004e-005 -0.0125318 0.000903476"
+                                                quat="0.516251 0.4829 -0.483241 0.516498"
+                                                mass="0.00274415"
+                                                diaginertia="1.19635e-007 1.09202e-007 7.77873e-008" />
+                                            <joint name="LH:index3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="LH:index3" pos="0 -0.003237 0" />
+                                            <body name="LH:index_top"
+                                                pos="0 -0.019169357657432556 0">
+                                                <!-- <body name="LH:index_top" pos="0
+                                                -0.025169357657432556 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+
+                                <!-- ======= MIDDLE ======= -->
+                                <body name="LH:middle1" pos="0.012834 -0.07500058141088484 0.00708">
+                                    <inertial pos="-0.000406411 -0.0213125 0.00065565"
+                                        quat="0.698451 0.715642 -0.00415503 0.00230486"
+                                        mass="0.00478229"
+                                        diaginertia="8.18595e-007 7.9569e-007 3.06253e-007" />
+                                    <joint name="LH:middle1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="LH:middle1_z" axis="0 0 1"
+                                        range="-0.349066 0.349066" stiffness="10" damping="0.2"
+                                        armature=".01" />
+                                    <geom type="mesh" mesh="LH:middle1" pos="0 -0.003 0" />
+                                    <body name="LH:middle2" pos="0 -0.04577417474985123 0">
+                                        <inertial pos="0.000841444 -0.012689 0.00057266"
+                                            quat="0.734883 0.677482 -0.0284727 0.0124412"
+                                            mass="0.00344765"
+                                            diaginertia="3.63962e-007 3.5906e-007 1.05304e-007" />
+                                        <joint name="LH:middle2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="LH:middle2"
+                                            pos="-0.001032 -0.0064 0" />
+                                        <body name="LH:middle3" pos="0 -0.02999854564666748 0">
+                                            <inertial pos="-4.31236e-005 -0.0125318 0.000903446"
+                                                quat="0.516263 0.482913 -0.483228 0.516487"
+                                                mass="0.00274417"
+                                                diaginertia="1.19635e-007 1.09202e-007 7.77884e-008" />
+                                            <joint name="LH:middle3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="LH:middle3" pos="0 -0.0078 0" />
+                                            <body name="LH:middle_top"
+                                                pos="0 -0.023867698192596436 0">
+                                                <!-- <body name="LH:middle_top" pos="0
+                                                -0.029867698192596436 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+                                <!-- ======= RING ======= -->
+                                <body name="LH:ring1" pos="0.034098 -0.06915576300907134 0.003114">
+                                    <inertial pos="-0.000406447 -0.0213125 0.00065563"
+                                        quat="0.698451 0.715642 -0.00415675 0.00230715"
+                                        mass="0.00478232"
+                                        diaginertia="8.18597e-007 7.95692e-007 3.06254e-007" />
+                                    <joint name="LH:ring1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="LH:ring1_z" axis="0 0 1" range="-0.349066 0.349066"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <geom type="mesh" mesh="LH:ring1" pos="0 0.003 0" />
+                                    <body name="LH:ring2" pos="0 -0.043062036752700806 0">
+                                        <inertial pos="0.000841518 -0.012689 0.000572674"
+                                            quat="0.73488 0.677478 -0.0285773 0.0125557"
+                                            mass="0.00344767"
+                                            diaginertia="3.63963e-007 3.59061e-007 1.05305e-007" />
+                                        <joint name="LH:ring2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="LH:ring2" pos="-0.000527 -0.003 0" />
+                                        <body name="LH:ring3" pos="0 -0.027877284049987793 0">
+                                            <inertial pos="-4.31973e-005 -0.0125318 0.000903457"
+                                                quat="0.516255 0.482902 -0.483238 0.516495"
+                                                mass="0.00274416"
+                                                diaginertia="1.19635e-007 1.09202e-007 7.77877e-008" />
+                                            <!-- <inertial pos="0 -0.028276 0" quat="0.516255
+                                            0.482902 -0.483238 0.516495" mass="0.00274416"
+                                            diaginertia="1.19635e-007 1.09202e-007 7.77877e-008" /> -->
+                                            <joint name="LH:ring3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="LH:ring3" pos="0 -0.005577 0" />
+                                            <body name="LH:ring_top" pos="0 -0.02153291618824005 0">
+                                                <!-- <body name="LH:ring_top" pos="0
+                                                -0.02753291618824005 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+
+                                <!-- ======= LITTLE ======= -->
+                                <body name="LH:pinky1" pos="0.053317 -0.06068319311141967 -0.005084">
+                                    <inertial pos="-0.000458624 -0.0160478 0.000924735"
+                                        quat="0.685529 0.72723 0.021252 -0.0270914" mass="0.0034099"
+                                        diaginertia="4.03391e-007 3.84061e-007 2.19866e-007" />
+                                    <joint name="LH:pinky1_x" axis="1 0 0" range="-0.698132 1.5708"
+                                        stiffness="10" damping="0.2" armature=".01" />
+                                    <joint name="LH:pinky1_z" axis="0 0 1"
+                                        range="-0.349066 0.698132" stiffness="10" damping="0.2"
+                                        armature=".01" />
+                                    <geom type="mesh" mesh="LH:pinky1" pos="0 0.0017 0" />
+                                    <body name="LH:pinky2" pos="0 -0.03316479182243347 0">
+                                        <inertial pos="0.000270832 -0.00914628 0.000738493"
+                                            quat="0.746786 0.664476 -4.11065e-005 -0.0279675"
+                                            mass="0.00250622"
+                                            diaginertia="1.79089e-007 1.75934e-007 7.44543e-008" />
+                                        <joint name="LH:pinky2" axis="1 0 0" range="0 1.5708"
+                                            stiffness="10" damping="0.2" armature=".01" />
+                                        <geom type="mesh" mesh="LH:pinky2" />
+                                        <body name="LH:pinky3" pos="0 -0.022145133137702942 0">
+                                            <inertial pos="-3.85026e-005 -0.0125047 0.000912295"
+                                                quat="0.516037 0.484447 -0.483043 0.515448"
+                                                mass="0.00273265"
+                                                diaginertia="1.19141e-007 1.08629e-007 7.77271e-008" />
+                                            <joint name="LH:pinky3" axis="1 0 0"
+                                                range="-0.0872665 1.5708" stiffness="10"
+                                                damping="0.2" armature=".01" />
+                                            <geom type="mesh" mesh="LH:pinky3" pos="0 -0.0005 0" />
+                                            <body name="LH:pinky_top" pos="0 -0.01653188192844391 0">
+                                                <!-- <body name="LH:pinky_top" pos="0
+                                                -0.02253188192844391 0"> -->
+                                                <!-- <geom type="sphere" size="0.006" /> -->
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+
+                    </body>
+                </body>
+            </body>
+
+
+        </body>
+    </worldbody>
+
+    <actuator>
+        <motor name="LH:wrist_dx" gear="20" joint="LH:wrist_dx" />
+        <motor name="LH:wrist_dy" gear="20" joint="LH:wrist_dy" />
+        <motor name="LH:wrist_dz" gear="20" joint="LH:wrist_dz" />
+
+        <motor name="LH:wrist_x" gear="20" joint="LH:wrist_x" />
+        <motor name="LH:wrist_y" gear="20" joint="LH:wrist_y" />
+        <motor name="LH:wrist_z" gear="20" joint="LH:wrist_z" />
+
+        <motor name="LH:thumb1_x" gear="20" joint="LH:thumb1_x" />
+        <motor name="LH:thumb1_y" gear="20" joint="LH:thumb1_y" />
+        <motor name="LH:thumb1_z" gear="20" joint="LH:thumb1_z" />
+        <motor name="LH:thumb2" gear="20" joint="LH:thumb2" />
+        <motor name="LH:thumb3" gear="20" joint="LH:thumb3" />
+
+        <motor name="LH:index1_z" gear="20" joint="LH:index1_z" />
+        <motor name="LH:index1_x" gear="20" joint="LH:index1_x" />
+
+        <motor name="LH:middle1_z" gear="20" joint="LH:middle1_z" />
+        <motor name="LH:middle1_x" gear="20" joint="LH:middle1_x" />
+
+        <motor name="LH:ring1_z" gear="20" joint="LH:ring1_z" />
+        <motor name="LH:ring1_x" gear="20" joint="LH:ring1_x" />
+
+        <motor name="LH:pinky1_z" gear="20" joint="LH:pinky1_z" />
+        <motor name="LH:pinky1_x" gear="20" joint="LH:pinky1_x" />
+
+
+        <motor name="LH:index2" gear="20" joint="LH:index2" />
+        <motor name="LH:index3" gear="20" joint="LH:index3" />
+        <motor name="LH:middle2" gear="20" joint="LH:middle2" />
+        <motor name="LH:middle3" gear="20" joint="LH:middle3" />
+        <motor name="LH:ring2" gear="20" joint="LH:ring2" />
+        <motor name="LH:ring3" gear="20" joint="LH:ring3" />
+        <motor name="LH:pinky2" gear="20" joint="LH:pinky2" />
+        <motor name="LH:pinky3" gear="20" joint="LH:pinky3" />
+    </actuator>
+</mujoco>
