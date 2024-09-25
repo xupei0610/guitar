@@ -69,29 +69,29 @@ To train single-hand policies, please run
     $ python main.py cfg/right.py --ckpt <checkpoint_dir>
 
 
-For the right-hand policy, we perform training using randomly generated string playing patterns, and, therefore, do not need to specify the musci note file.
-For the left-hand policy, we provide some guitar tabs in `assets/notes`, which can be used to train a left-hand policy for a specific song.
+For the right-hand policy, we perform training using randomly generated string playing patterns, and, therefore, do not need to specify the music note file.
+For the left-hand policy, we provide some guitar tabs in `assets/notes`, which can be used to train a policy for a specific song.
 We do not provide the music track collection that were used for the left hand policy training, as described in the paper, due to copyright reasons.
-A policy supporting mutiple music tracks can be trained by putting multiple music track into one note file.
+A policy supporting mutiple music tracks can be obtained by putting multiple music tracks into one note file for training.
 
 To train two-hand policies, pleas run
 
     $ python main.py cfg/two_demo.py --note <music_note_file> \
-        --left <left_hand_policy_checkpoint_dir> \
-        --right <left_hand_policy_checkpoint_dir> \
+        --left <checkpoint_dir_or_file_of_the_pretrained_left_hand_policy_> \
+        --right <checkpoint_dir_or_file_of_the_pretrained_right_hand_policy> \
         --ckpt <checkpoint_dir>
 
 
 ### Evaluation
 
     # left-hand policy
-    $ python main.py cfg/left_demo.py> --note <music_note_file> --ckpt <checkpoint_dir --test
+    $ python main.py cfg/left_demo.py> --note <music_note_file> --ckpt <checkpoint_dir_or_file> --test
     
     # right-hand policy
-    $ python main.py cfg/right.py --note <music_note_file> --ckpt <checkpoint_dir> --test
+    $ python main.py cfg/right.py --note <music_note_file> --ckpt <checkpoint_dir_or_file> --test
 
     # two-hand policy
-    $ python main.py cfg/two_demo.py --note <music_note_file> --ckpt <checkpoint_dir> --test
+    $ python main.py cfg/two_demo.py --note <music_note_file> --ckpt <checkpoint_dir_or_file> --test
 
 
 We provide pre-trained bimanual control policies in `models` folder and the demo music notes in `assets/notes`.
