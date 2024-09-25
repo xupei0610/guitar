@@ -94,7 +94,7 @@ To train two-hand policies, pleas run
     $ python main.py cfg/two_demo.py --note <music_note_file> --ckpt <checkpoint_dir_or_file> --test
 
 
-We provide pre-trained bimanual control policies in `models` folder and the demo music notes in `assets/notes`.
-We also provide the pre-trained right-hand plicy in `models` folder.
+We provide pre-trained bimanual control policies in `pretrained` folder and the demo music notes in `assets/notes`.
+We also provide the pre-trained right-hand plicy in `pretrained` folder.
 
 Please visit our [webpage](https://pei-xu.github.io/guitar) for animated results of the pre-trained models.
