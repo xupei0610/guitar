@@ -2,7 +2,7 @@
 
 ![](doc/teaser.png)
 
-This is the official implementation for _*Synchronize Dual Hands for Physics-Based Dexterous Guitar Playing*_. [[Webpage](https://pei-xu.github.io/guitar)] [[arXiv](#)] [[Youtube](https://www.youtube.com/watch?v=r_y0P2pIeF8&list=PLLfEynalFz6j0X5Kiut0U3GLRxt3Oz_oa)] [SIGGRAPH Asia'24]
+This is the official implementation for _*Synchronize Dual Hands for Physics-Based Dexterous Guitar Playing*_. [[Webpage](https://pei-xu.github.io/guitar)] [[arXiv](https://arxiv.org/abs/2409.16629)] [[Youtube](https://www.youtube.com/watch?v=r_y0P2pIeF8&list=PLLfEynalFz6j0X5Kiut0U3GLRxt3Oz_oa)] [SIGGRAPH Asia'24]
 
 This implementation is based on 
 
