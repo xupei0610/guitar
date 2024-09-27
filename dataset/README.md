@@ -20,7 +20,7 @@ Diverse guitar-playing motions about 1 hour long, including:
 - hammer-ons and pull-offs.
 
 All data were collected from a professional guitarist, and are general guitar-playing motions instead of the recording of playing any specific songs.
-All notes were played as 1/8th and mostly at 100BPM. 
+All notes were played as 1/8th and mostly at 100BPM, and the data were recorded at 120FPS.
 The instrument is a [Fender American Deluxe Stratocaster](doc/guitar.pdf)  guitar with 6 strings and 22 frets. The scale length is 25.5 inches.
 
 We deployed 18 infrared cameras for motion capture, 7 of which have a resolution of 9MP and 11 have a resolution of 4MP. All cameras are the products from [NOKOV](https://www.nokov.com/). 
