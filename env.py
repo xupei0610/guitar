@@ -2088,7 +2088,7 @@ class ICCGANTwoHands(ICCGANHandBase):
     CHARACTER_MODEL = ["assets/left_hand_guitar.xml", "right_hand.xml"]
 
     def get_goal_dim(self):
-        return (self.n_strings+1)*self.goal_horizon*2 + 7
+        return (self.n_strings+1)*self.goal_horizon*2 + 6
 
     def create_tensors(self):
         super().create_tensors()
@@ -2161,14 +2161,7 @@ class ICCGANTwoHands(ICCGANHandBase):
         goal_l.div_(self.n_frets+2).mul_(2)
         goal_l[goal_l > 1] -= 2
         goal_r = goal_r.to(torch.float32).view(n_envs, t.size(1), -1)
-        if "ready" not in self.info:
-            ready = torch.zeros_like(t[:, 0])
-        else:
-            if env_ids is None:
-                ready = self.info["ready"].to(torch.float32)
-            else:
-                ready = self.info["ready"][env_ids].to(torch.float32)
-        return torch.cat((torch.cat((goal_l, t),-1).view(n_envs,-1), torch.cat((goal_r, t),-1).view(n_envs,-1), ready, pluck_correct), 1)
+        return torch.cat((torch.cat((goal_l, t),-1).view(n_envs,-1), torch.cat((goal_r, t),-1).view(n_envs,-1), pluck_correct), 1)
 
     def reset_envs(self, env_ids):
         self.pressed.index_fill_(0, env_ids, 0)
@@ -2203,13 +2196,6 @@ class ICCGANTwoHands(ICCGANHandBase):
         timer = torch.logical_or(self.goal_t[:, 0] <= 3, self.goal_t_ >= 5)
         ready = torch.logical_or(pressed, timer.unsqueeze_(-1))
         rew_r = ICCGANRightHand._reward(self, self.goal_tensor_right, self.goal_t, ready, statistic=True)
-
-        timer_ = torch.logical_or(self.goal_t[:, 0]-1 <= 3, self.goal_t_+1 >= 5)
-        ready_ = torch.logical_or(pressed, timer_.unsqueeze_(-1))
-        ready_ = torch.all(ready_, -1)
-        ready2ready = torch.logical_and(torch.any(self.goal_tensor_right[:, :self.n_strings], -1), ~self.info["new_note"])
-        self.info["ready"] = torch.logical_and(ready_, ready2ready).unsqueeze_(-1)
-
         return torch.cat((rew_l, rew_r), -1)
         
     def update_viewer(self):
