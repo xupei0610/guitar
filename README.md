@@ -21,6 +21,11 @@ This implementation is based on
 [[Youtube](https://www.youtube.com/watch?v=VHMyvDD3B_o)]
 [[webpage](https://pei-xu.github.io/ICCGAN)]
 
+## Copyright
+We respect the copyright of all the pieces of music used in this research project.
+All the music notes and video demonstrations (containing audio) will be only used for educational and scientific research purposes.
+If you are the owner of a piece of music and do not want it appearing in this project, please let us know.
+We will kindly remove the related content. Thanks.
 
 ## Citation
 If you use the code or provided motions for your work, please consider citing our papers:
