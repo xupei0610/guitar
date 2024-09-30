@@ -47,7 +47,7 @@ We also refer to our work for piano playing _*FürElise: Capturing and Physicall
 ## Mocap Data
 We provide the guitar-playing data that we captured from a professional guitarist.
 The mocap data were collected under the support from [NOKOV](https://www.nokov.com/).
-The dataset includes various motions of guitar-playing techniques (see [dataset/README.md](data) for details).
+The dataset includes various motions of guitar-playing techniques (see [dataset/README.md](dataset) for details).
 In this project, however, we use only two short clips for policy training (see `assets/motions`).
 
 
