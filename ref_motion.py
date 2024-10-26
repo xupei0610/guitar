@@ -19,7 +19,7 @@ Motion = namedtuple("Motion",
     "fps pos orient ang_vel lin_vel local_q local_p local_vel"
 )
 
-def load_mjcf(filename):
+def load_mjcf(filename: Union[str, Sequence[str]]):
     if type(filename) == str:
         filename = [filename]
     
@@ -138,7 +138,7 @@ def compute_motion(fps:int, skeleton: Skeleton, local_q, local_p):
 
 class ReferenceMotion():
     def __init__(self, motion_file: Union[str, Sequence[str]],
-        character_model: str, 
+        character_model: Union[str, Sequence[str]], 
         key_links: Optional[Sequence[int]]=None, 
         dofs: Optional[Sequence[int]]=None, 
         device: Optional[torch.device]=None
