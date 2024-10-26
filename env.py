@@ -353,7 +353,7 @@ class Env(object):
     def reset_envs(self, env_ids):
         ref_root_tensor, ref_link_tensor, ref_joint_tensor = self.init_state(env_ids)
 
-        self.root_tensor[env_ids] = ref_root_tensor.unsqueeze_(1).repeat(1, self.root_tensor.size(1), 1)
+        self.root_tensor[env_ids] = ref_root_tensor
         self.link_tensor[env_ids] = ref_link_tensor
         if self.action_tensor is None:
             self.joint_tensor[env_ids] = ref_joint_tensor
@@ -657,7 +657,7 @@ class ICCGANHumanoid(Env):
                 motion_times = np.concatenate((motion_times0, *[motion_times0+dt*i for i in range(1, ob_horizon)]))
                 root_tensor, link_tensor = lib.state(motion_ids, motion_times, with_joint_tensor=False)
                 samples = torch.cat((
-                    root_tensor, link_tensor.view(root_tensor.size(0), -1)
+                    root_tensor[:,0], link_tensor.view(root_tensor.size(0), -1)
                 ), -1).view(ob_horizon, n_inst, -1)
                 ob = observe_iccgan(samples, None, key_links, parent_link, include_velocity=False, local_pos=local_pos)
                 obs.append(ob.cpu())

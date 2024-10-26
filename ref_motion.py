@@ -159,16 +159,18 @@ class ReferenceMotion():
         if key_links is None:
             key_links = list(np.arange(len(skeleton.nodes)))
         controllable_links = list(set([idx for _, idx, __  in skeleton.dofs]))
+        root_links = [i for i, p in enumerate(skeleton.parents) if p == -1]
+        self.n_root_links = len(root_links)
         self.n_key_links = len(key_links)
         self.n_controllable_links = len(controllable_links)
         if type(motion_file) == str:
-            self.load_motions(motion_file, skeleton, controllable_links, key_links)
+            self.load_motions(motion_file, skeleton, controllable_links, key_links, root_links)
         else:
             for m in motion_file:
-                self.load_motions(m, skeleton, controllable_links, key_links)
+                self.load_motions(m, skeleton, controllable_links, key_links, root_links)
             self.motion_weight = np.array(self.motion_weight)
 
-    def load_motions(self, motion_file, skeleton, controllable_links, key_links):
+    def load_motions(self, motion_file, skeleton, controllable_links, key_links, root_links):
         self.motion_length = list(self.motion_length)
         self.motion_dt = list(self.motion_dt)
         self.motion_n_frames = list(self.motion_n_frames)
@@ -240,9 +242,9 @@ class ReferenceMotion():
             dt = 1.0 / fps
             motion_len = dt * (n_frames - 1)
             motion_ = (
-                motion.pos[:,0].clone(),
-                motion.orient[:,0].clone(),
-                torch.cat((motion.lin_vel[:,0], motion.ang_vel[:,0]), -1),
+                motion.pos[:,root_links].clone(),
+                motion.orient[:,root_links].clone(),
+                torch.cat((motion.lin_vel[:,root_links], motion.ang_vel[:,root_links]), -1),
                 motion.pos[:,key_links].clone(),
                 motion.orient[:,key_links].clone(),
                 torch.cat((motion.lin_vel[:,key_links], motion.ang_vel[:,key_links]), -1),
@@ -299,12 +301,13 @@ class ReferenceMotion():
         device = self.device
 
         n_key_links = self.n_key_links
-        root_pos0 = torch.empty((n, 3), dtype=torch.float, requires_grad=False)
-        root_pos1 = torch.empty((n, 3), dtype=torch.float, requires_grad=False)
-        root_orient = torch.empty((n, 4), dtype=torch.float, requires_grad=False)
-        root_orient0 = torch.empty((n, 4), dtype=torch.float, requires_grad=False)
-        root_orient1 = torch.empty((n, 4), dtype=torch.float, requires_grad=False)
-        root_vel = torch.empty((n, 6), dtype=torch.float, requires_grad=False)
+        n_root_links = self.n_root_links
+        root_pos0 = torch.empty((n, n_root_links, 3), dtype=torch.float, requires_grad=False)
+        root_pos1 = torch.empty((n, n_root_links, 3), dtype=torch.float, requires_grad=False)
+        root_orient = torch.empty((n, n_root_links, 4), dtype=torch.float, requires_grad=False)
+        root_orient0 = torch.empty((n, n_root_links, 4), dtype=torch.float, requires_grad=False)
+        root_orient1 = torch.empty((n, n_root_links, 4), dtype=torch.float, requires_grad=False)
+        root_vel = torch.empty((n, n_root_links, 6), dtype=torch.float, requires_grad=False)
         link_pos0 = torch.empty((n, n_key_links, 3), dtype=torch.float, requires_grad=False)
         link_pos1 = torch.empty((n, n_key_links, 3), dtype=torch.float, requires_grad=False)
         link_orient0 = torch.empty((n, n_key_links, 4), dtype=torch.float, requires_grad=False)
@@ -377,8 +380,8 @@ class ReferenceMotion():
         frac = torch.tensor(frac, device=root_pos0.device, dtype=root_pos0.dtype).unsqueeze_(-1)
         frac_ = frac[..., None]
 
-        root_pos = ((1.0-frac)*root_pos0).add_(frac*root_pos1)
-        root_orient = slerp(root_orient0, root_orient1, frac)
+        root_pos = ((1.0-frac_)*root_pos0).add_(frac_*root_pos1)
+        root_orient = slerp(root_orient0, root_orient1, frac_)
         link_pos = ((1.0-frac_)*link_pos0).add_(frac_*link_pos1)
         link_orient = slerp(link_orient0, link_orient1, frac_)
         root_tensor = torch.cat((root_pos, root_orient, root_vel), -1)
