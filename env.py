@@ -24,11 +24,6 @@ class DiscriminatorConfig(object):
         self.ob_horizon = ob_horizon
         self.weight = weight
 
-DiscriminatorProperty = namedtuple("DiscriminatorProperty",
-    "name key_links parent_link local_pos replay_speed ob_horizon id"
-)
-
-
 class Env(object):
     UP_AXIS = 2
     CHARACTER_MODEL = None
@@ -546,20 +541,16 @@ class ICCGANHumanoid(Env):
 
             assert(key_links is None or all(lid >= 0 for lid in key_links))
             assert(parent_link is None or parent_link >= 0)
+            config.parent_link = parent_link
+            config.key_links = key_links
             
             if config.motion_file is None:
                 config.motion_file = motion_file
             if config.ob_horizon is None:
                 config.ob_horizon = self.ob_horizon+1
-            self.discriminators[id] = DiscriminatorProperty(
-                name = id,
-                key_links = key_links,
-                parent_link = parent_link,
-                local_pos = config.local_pos,
-                replay_speed = config.replay_speed,
-                ob_horizon = config.ob_horizon,
-                id=i
-            )
+            config.id = i
+            config.name = id
+            self.discriminators[id] = config
             if self.reward_weights is not None:
                 self.reward_weights[i] = config.weight
             max_ob_horizon = max(max_ob_horizon, config.ob_horizon)
@@ -593,43 +584,15 @@ class ICCGANHumanoid(Env):
         else:
             self.disc_dim = {}
 
-        self.ref_motion = ReferenceMotion(motion_file=motion_file, character_model=self.character_model,
-            key_links=np.arange(n_links), device=self.device)
-        
+        self.ref_motion, self.root_links = self.build_motion_lib(motion_file)
         self.sampling_workers = []
-        self.disc_ref_motion = {}
-        import torch.multiprocessing as mp
-        mp.set_start_method("spawn")
-        manager = mp.Manager()
-        seed = np.random.get_state()[1][0]
-        for n, config in self.discriminators.items():
-            q = manager.Queue(maxsize=1)
-            self.disc_ref_motion[n] = q
-            key_links_ref = list(range(n_links)) if config.key_links is None else config.key_links
-            if config.parent_link is None:
-                parent_link = None
-                key_links = None
-            else:
-                if config.parent_link in key_links_ref:
-                    key_links = None
-                else:
-                    key_links = list(range(1, len(key_links_ref)+1))
-                    key_links_ref = [config.parent_link] + key_links_ref
-                parent_link = key_links_ref.index(config.parent_link)
-            p = mp.Process(target=self.__class__.ref_motion_sample, args=(q,
-                seed+1+config.id, self.step_time, len(self.envs), config.ob_horizon, key_links, parent_link, config.local_pos, config.replay_speed,
-                dict(motion_file=discriminators[n].motion_file, character_model=self.character_model,
-                    key_links=key_links_ref, device=self.device
-                )
-            ))
-            p.start()
-            self.sampling_workers.append(p)
+        self.real_samples = []
 
-        self.real_samples = [{n:None for n in self.disc_ref_motion.keys()} for _ in range(128)]
-        for n, q in self.disc_ref_motion.items():
-            for i, v in enumerate(q.get()):
-                self.real_samples[i][n] = v.to(self.device)
-    
+    def build_motion_lib(self, motion_file):
+        ref_motion = ReferenceMotion(motion_file=motion_file, character_model=self.character_model, device=self.device)
+        root_links = [i for i, p in enumerate(ref_motion.skeleton.parents) if p == -1]
+        return ref_motion, root_links
+        
     def __del__(self):
         if hasattr(self, "sampling_workers"):
             for p in self.sampling_workers:
@@ -655,10 +618,8 @@ class ICCGANHumanoid(Env):
                 motion_ids, motion_times0 = lib.sample(n_inst, truncate_time=dt*(ob_horizon-1))
                 motion_ids = np.tile(motion_ids, ob_horizon)
                 motion_times = np.concatenate((motion_times0, *[motion_times0+dt*i for i in range(1, ob_horizon)]))
-                root_tensor, link_tensor = lib.state(motion_ids, motion_times, with_joint_tensor=False)
-                samples = torch.cat((
-                    root_tensor[:,0], link_tensor.view(root_tensor.size(0), -1)
-                ), -1).view(ob_horizon, n_inst, -1)
+                link_tensor = lib.state(motion_ids, motion_times, with_joint_tensor=False)
+                samples = link_tensor.view(ob_horizon, n_inst, -1)
                 ob = observe_iccgan(samples, None, key_links, parent_link, include_velocity=False, local_pos=local_pos)
                 obs.append(ob.cpu())
             try:
@@ -686,7 +647,7 @@ class ICCGANHumanoid(Env):
     
     def step(self, actions):
         obs, rews, dones, info = super().step(actions)
-        if self.discriminators:
+        if self.discriminators and self.training:
             info["disc_obs"] = self.observe_disc(self.state_hist)
             info["disc_obs_expert"] = self.fetch_real_samples()
         return obs, rews, dones, info
@@ -714,11 +675,11 @@ class ICCGANHumanoid(Env):
 
     def init_state(self, env_ids):
         motion_ids, motion_times = self.ref_motion.sample(len(env_ids))
-        return self.ref_motion.state(motion_ids, motion_times)
+        ref_link_tensor, ref_joint_tensor = self.ref_motion.state(motion_ids, motion_times)
+        return ref_link_tensor[:, self.root_links], ref_link_tensor, ref_joint_tensor
+    
 
     def create_tensors(self):
-        self.blender = []
-
         super().create_tensors()
         n_dofs = sum([self.gym.get_actor_dof_count(self.envs[0], actor) for actor in self.actors])
         n_links = sum([self.gym.get_actor_rigid_body_count(self.envs[0], actor) for actor in self.actors])
@@ -743,7 +704,7 @@ class ICCGANHumanoid(Env):
         
         self.char_contact_force_tensor = self.contact_force_tensor[:, :n_links]
     
-        self.state_hist = torch.empty((self.ob_horizon+1, len(self.envs), 13 + n_links*13),
+        self.state_hist = torch.empty((self.ob_horizon+1, len(self.envs), n_links*13),
             dtype=self.root_tensor.dtype, device=self.device)
         
 
@@ -787,16 +748,12 @@ class ICCGANHumanoid(Env):
         n_envs = len(self.envs)
         if env_ids is None or len(env_ids) == n_envs:
             self.state_hist[:-1] = self.state_hist[1:].clone()
-            self.state_hist[-1] = torch.cat((
-                self.char_root_tensor, self.char_link_tensor.view(n_envs, -1)
-            ), -1)
+            self.state_hist[-1] = self.char_link_tensor.view(n_envs, -1)
             env_ids = None
         else:
             n_envs = len(env_ids)
             self.state_hist[:-1, env_ids] = self.state_hist[1:, env_ids].clone()
-            self.state_hist[-1, env_ids] = torch.cat((
-                self.char_root_tensor[env_ids], self.char_link_tensor[env_ids].view(n_envs, -1)
-            ), -1)
+            self.state_hist[-1, env_ids] = self.char_link_tensor[env_ids].view(n_envs, -1)
         return self._observe(env_ids)
     
     def _observe(self, env_ids):
@@ -830,6 +787,43 @@ class ICCGANHumanoid(Env):
 
     def fetch_real_samples(self):
         if not self.real_samples:
+            if not self.sampling_workers:
+                self.disc_ref_motion = {}
+                import torch.multiprocessing as mp
+                mp.set_start_method("spawn")
+                manager = mp.Manager()
+                seed = np.random.get_state()[1][0]
+                for n, config in self.discriminators.items():
+                    q = manager.Queue(maxsize=1)
+                    self.disc_ref_motion[n] = q
+                    key_links = None if config.key_links is None else config.key_links
+                    if key_links is None:  # all links are key links and observable
+                        parent_link_index = config.parent_link
+                        key_links_index = None
+                    elif config.parent_link is None: # parent link is the root, ensure it appears as the first in the key link list
+                        parent_link_index = None
+                        if 0 in key_links:
+                            key_links = [0] + [_ for _ in key_links if _ != 0] # root link is the first key links
+                            key_links_index = None # all links in the key link list are key links for observation
+                        else:
+                            key_links = [0] + key_links # the root link in the key link list but not for observation
+                            key_links_index = list(range(1, len(key_links)+1))
+                    else:
+                        if config.parent_link in key_links:
+                            key_links_index = None
+                        else:
+                            key_links_index = list(range(1, len(key_links)+1))
+                            key_links = [config.parent_link] + key_links
+                        parent_link_index = key_links.index(config.parent_link)
+                    p = mp.Process(target=self.__class__.ref_motion_sample, args=(q,
+                        seed+1+config.id, self.step_time, len(self.envs), config.ob_horizon, key_links_index, parent_link_index, config.local_pos, config.replay_speed,
+                        dict(motion_file=config.motion_file, character_model=self.character_model,
+                            key_links=key_links, device=self.device
+                        )
+                    ))
+                    p.start()
+                    self.sampling_workers.append(p)
+
             self.real_samples = [{n: None for n in self.disc_ref_motion.keys()} for _ in range(128)]
             for n, q in self.disc_ref_motion.items():
                 for i, v in enumerate(q.get()):
@@ -847,14 +841,14 @@ def observe_iccgan(state_hist: torch.Tensor, seq_len: Optional[torch.Tensor]=Non
     n_hist = state_hist.size(0)
     n_inst = state_hist.size(1)
 
-    root_tensor = state_hist[..., :13]
-    link_tensor = state_hist[...,13:].view(n_hist, n_inst, -1, 13)
+    link_tensor = state_hist.view(n_hist, n_inst, -1, 13)
     if key_links is None:
         link_pos, link_orient = link_tensor[...,:3], link_tensor[...,3:7]
     else:
         link_pos, link_orient = link_tensor[:,:,key_links,:3], link_tensor[:,:,key_links,3:7]
 
     if parent_link is None:
+        root_tensor = state_hist[..., :13]
         if local_pos is True:
             origin = root_tensor[:,:, :3]          # N x 3
             orient = root_tensor[:,:,3:7]          # N x 4

@@ -46,8 +46,9 @@ TRAINING_PARAMS = dict(
     disc_lr = 1e-5,
     max_epochs = 50000,
     save_interval = 10000,
+    log_interval = 50
     terminate_reward = -25,
-    control_mode = "position"
+    control_mode = "position",
 )
 
 def test(env, model):
@@ -124,6 +125,7 @@ def train(env, model, ckpt_dir, training_params):
     GAMMA = training_params.gamma
     GAMMA_LAMBDA = training_params.gamma * training_params.lambda_
     OPT_EPOCHS = training_params.opt_epochs
+    LOG_INTERVAL = training_params.log_interval
 
     model.eval()
     env.train()
@@ -336,7 +338,7 @@ def train(env, model, ckpt_dir, training_params):
             for buf in buffer_disc.values():
                 for v in buf.values(): v.clear()
 
-            if epoch % 1 == 0:
+            if epoch % LOG_INTERVAL == 1:
                 acc_l = torch.mean(torch.cat(accuracy_l)) if accuracy_l else np.nan
                 prec_l = torch.mean(torch.cat(precision_l)) if precision_l else np.nan
                 rec_l = torch.mean(torch.cat(recall_l)) if recall_l else np.nan
