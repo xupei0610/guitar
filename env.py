@@ -873,6 +873,10 @@ def observe_iccgan(state_hist: torch.Tensor, seq_len: Optional[torch.Tensor]=Non
             origin = link_tensor[-1,:, parent_link, :3]  # N x 3
             orient = link_tensor[-1,:, parent_link,3:7]  # N x 4
         orient_inv = quatconj(orient)                # L x N x 4 
+        # FIXME Here is a bug. It should be `orient_inv` instead `orient`
+        # This bug will not influence the model training,
+        # since the `parent_link` is the guitar which is fixed in the global space.
+        # However, fixing this bug will make the pre-trained models unable to work.
         orient_inv = orient.view(-1, n_inst, 1, 4)   # L x N x 1 x 4  or 1 x N x 1 x 4
         origin = origin.unsqueeze(-2)                # (L x) N x 1 x 3
 
