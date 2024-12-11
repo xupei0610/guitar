@@ -33,7 +33,10 @@ If you use the code or provided motions for your work, please consider citing ou
     @article{guitar,
         author = {Xu, Pei and Wang, Ruocheng},
         title = {Synchronize Dual Hands for Physics-Based Dexterous Guitar Playing},
-        booktitle = {SIGGRAPH Asia 2024 Conference Papers (SA Conference Papers '24)},
+        booktitle = {SIGGRAPH Asia 2024 Conference Papers},
+        series = {SA '24},
+        articleno = {143},
+        numpages = {11},
         publisher = {Association for Computing Machinery},
         address = {New York, NY, USA},
         year = {2024},
@@ -41,7 +44,7 @@ If you use the code or provided motions for your work, please consider citing ou
     }
 
 
-We also refer to our work for piano playing _*FürElise: Capturing and Physically Synthesizing Hand Motions of Piano Performance*_ [SIGGRAPH Asia'24].
+We also refer to our work for piano playing [_*FürElise: Capturing and Physically Synthesizing Hand Motions of Piano Performance*_](https://for-elise.github.io/) [SIGGRAPH Asia'24].
 
 
 ## Mocap Data
