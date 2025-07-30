@@ -46,7 +46,7 @@ TRAINING_PARAMS = dict(
     disc_lr = 1e-5,
     max_epochs = 50000,
     save_interval = 10000,
-    log_interval = 50
+    log_interval = 50,
     terminate_reward = -25,
     control_mode = "position",
 )
