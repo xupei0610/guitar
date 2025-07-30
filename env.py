@@ -704,7 +704,7 @@ class ICCGANHumanoid(Env):
         
         self.char_contact_force_tensor = self.contact_force_tensor[:, :n_links]
     
-        self.state_hist = torch.empty((self.ob_horizon+1, len(self.envs), n_links*13),
+        self.state_hist = torch.empty((self.ob_horizon+1, len(self.envs), 13 + n_links*13),
             dtype=self.root_tensor.dtype, device=self.device)
         
 
@@ -748,12 +748,16 @@ class ICCGANHumanoid(Env):
         n_envs = len(self.envs)
         if env_ids is None or len(env_ids) == n_envs:
             self.state_hist[:-1] = self.state_hist[1:].clone()
-            self.state_hist[-1] = self.char_link_tensor.view(n_envs, -1)
+            self.state_hist[-1] = torch.cat((
+                self.char_root_tensor, self.char_link_tensor.view(n_envs, -1)
+            ), -1)
             env_ids = None
         else:
             n_envs = len(env_ids)
             self.state_hist[:-1, env_ids] = self.state_hist[1:, env_ids].clone()
-            self.state_hist[-1, env_ids] = self.char_link_tensor[env_ids].view(n_envs, -1)
+            self.state_hist[-1, env_ids] = torch.cat((
+                self.char_root_tensor[env_ids], self.char_link_tensor[env_ids].view(n_envs, -1)
+            ), -1)
         return self._observe(env_ids)
     
     def _observe(self, env_ids):
@@ -841,14 +845,14 @@ def observe_iccgan(state_hist: torch.Tensor, seq_len: Optional[torch.Tensor]=Non
     n_hist = state_hist.size(0)
     n_inst = state_hist.size(1)
 
-    link_tensor = state_hist.view(n_hist, n_inst, -1, 13)
+    root_tensor = state_hist[..., :13]
+    link_tensor = state_hist[...,13:].view(n_hist, n_inst, -1, 13)
     if key_links is None:
         link_pos, link_orient = link_tensor[...,:3], link_tensor[...,3:7]
     else:
         link_pos, link_orient = link_tensor[:,:,key_links,:3], link_tensor[:,:,key_links,3:7]
 
     if parent_link is None:
-        root_tensor = state_hist[..., :13]
         if local_pos is True:
             origin = root_tensor[:,:, :3]          # N x 3
             orient = root_tensor[:,:,3:7]          # N x 4
@@ -1668,12 +1672,12 @@ class ICCGANLeftHand(ICCGANHandBase):
 
         rew = torch.where(has_goal, rew_tar, rew_not_press)
 
-        wrist_idx = 13 + self.wrist_l*13
+        wrist_idx = self.wrist_l*13
         pw, pw_ = self.link_pos[:, self.wrist_l], self.state_hist[-1][:, wrist_idx:wrist_idx+3]
         qw, qw_ = self.link_orient[:, self.wrist_l], self.state_hist[-1][:, wrist_idx+3:wrist_idx+7]
         pf_ = []
         for f in self.finger_top_l:
-            fidx = 13 + f*13
+            fidx = f*13
             pf_.append(self.state_hist[-1][:, fidx:fidx+3])
         pf_ = rotatepoint(quatconj(qw_).unsqueeze_(1), torch.stack(pf_, 1)-pw_.unsqueeze(1))
         pf = rotatepoint(quatconj(qw).unsqueeze_(1), self.link_pos[:, self.finger_top_l]-pw.unsqueeze(1))
